@@ -5,6 +5,7 @@ class Value:
         self._prev = set(_children)
         self._op = _op
         self.label = label
+        self.grad = 0.0
     
     def __repr__(self):
         return f"Value(data = {self.data}, Prev = {self._prev}, Operation = {self._op})"
@@ -42,7 +43,7 @@ def draw_dot(root):
         # for any value in the graph, create a rectangular ('record') node for it
         dot.node(
             name=uid,
-            label="{ %s | data %.4f }" % (n.label, n.data,),
+            label="{ %s | data %.4f | grad %.4f}" % (n.label, n.data, n.grad),
             shape="record",
         )
 
@@ -68,5 +69,35 @@ d = e + c; d.label = "d"
 f = Value(-2.0, label = "f")
 L = d * f; L.label = "L"
 
+#backprop manually
+L.grad = 1.0
+d.grad = f.data
+f.grad = d.data
+
+
 dot = draw_dot(L)
 dot.render("graph", view=True)
+
+def lol():
+    h = 0.001
+    a = Value(2.0, label = "a")
+    b = Value(-3.0, label = "b")
+    c = Value(10.0, label = "c")
+    e = a*b; e.label = "e"
+    d = e + c; d.label = "d"
+    f = Value(-2.0, label = "f")
+    L = d * f; L.label = "L"
+    L1 = L.data
+
+    a = Value(2.0, label = "a")
+    b = Value(-3.0, label = "b")
+    c = Value(10.0, label = "c")
+    e = a*b; e.label = "e"
+    d = e + c; d.label = "d"
+    f = Value(-2.0, label = "f")
+    L = d * f; L.label = "L"
+    L2 = L.data
+
+    return (L1 - L2) / h
+
+print(lol())
