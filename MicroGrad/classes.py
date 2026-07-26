@@ -73,10 +73,25 @@ L = d * f; L.label = "L"
 L.grad = 1.0
 d.grad = f.data
 f.grad = d.data
+c.grad = -2.0
+e.grad = -2.0
+a.grad = 6.0
+b.grad = -4.0
 
 
 dot = draw_dot(L)
-dot.render("graph", view=True)
+# dot.render("graph", view=True)
+
+for i in range(100):
+    lr = 0.001
+    a.data += lr * a.grad
+    b.data += lr * b.grad
+    c.data += lr * c.grad
+    f.data += lr * f.grad
+    e = a * b
+    d = c + e
+    L = d + f
+    print (L.data)
 
 def lol():
     h = 0.001
@@ -99,5 +114,3 @@ def lol():
     L2 = L.data
 
     return (L1 - L2) / h
-
-print(lol())
