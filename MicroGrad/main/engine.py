@@ -61,9 +61,22 @@ class Value():
         return out
 
     def _backward(self):
-        pass
+        topo = []
+        visited = set()
+        
+        def topological(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    topological(child)
+                topo.append(v)
+        topological(self)
+        self.grad = 1
 
-    
+        for v in reversed(topo):
+            v._backward()
+        
+
     def __radd__(self, other):
         return self + other
 
