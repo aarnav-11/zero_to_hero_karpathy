@@ -34,9 +34,36 @@ class Value():
         def _backward():
             self.grad += (out.grad * other.data)
             other.grad += (out.grad * self.data)
-        out = out._backward
+        out._backward = _backward
+        return out
+    
+    def __pow__(self, raised):
+        assert isinstance(raised, (int, float)), "Only support float and int for now"
+        out = Value(self.data ** raised, (self,), f"^{raised}")
+
+        def _backward():
+            self.grad += (raised * (self.data**(raised - 1))) * out.grad
+        out._backward = _backward
         return out
 
+    def relu(self):
+        if self.data <= 0:
+            out = Value(0)
+        else:
+            out = Value(self.data, (self, ), "Relu")
+        
+        def _backward():
+            if self.data <=  0:
+                self.grad += 0
+            else:
+                self.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def _backward(self):
+        pass
+
+    
     def __radd__(self, other):
         return self + other
 
