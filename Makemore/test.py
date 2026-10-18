@@ -11,13 +11,12 @@ words = open("names.txt", "r").read().split()
 # print(f"length = {length}, firstTen = {firstTen}, max = {maxLen}, min = {minLen}")
 
 
-a = torch.zeros(28, 28, dtype=torch.int32)
+a = torch.zeros(27, 27, dtype=torch.int32)
 charToInt = defaultdict(int)
 intToChar = defaultdict(str)
 
 alphabet = (set("".join(words)))
-alphabet.add("<S>")
-alphabet.add("<E>")
+alphabet.add(".")
 alphabet = sorted(list(alphabet))
 # print(alphabet)
 
@@ -27,30 +26,33 @@ for i, char in enumerate(alphabet):
 # print(charToInt)
 
 for word in words:
-    word = ["<S>"] + list(word) + ["<E>"]
+    word = ["."] + list(word) + ["."]
     for ch1, ch2 in zip(word, word[1:]):
         a[charToInt[ch1],charToInt[ch2]] += 1
 
-# print(a)
+# print(a[0])
+p = a[0].float()
+p = p / sum(a[0])
+print(p)
 
+# def final(start_char, max_length=20):
+#     result = [start_char]
+#     current_char = start_char
 
-def final(start_char, max_length=20):
-    result = [start_char]
-    current_char = start_char
+#     for _ in range(max_length):
+#         in_idx = charToInt[current_char]
 
-    for _ in range(max_length):
-        in_idx = charToInt[current_char]
+#         out_idx = a[in_idx].argmax().item()
+#         out_char = intToChar[out_idx]
 
-        out_idx = a[in_idx].argmax().item()
-        out_char = intToChar[out_idx]
+#         if out_char == "<E>":
+#             break
 
-        if out_char == "<E>":
-            break
+#         result.append(out_char)
+#         current_char = out_char
 
-        result.append(out_char)
-        current_char = out_char
+#     return "".join(result)
 
-    return "".join(result)
+# for char in alphabet:
+#     print(f"{char} : {final(char)}")
 
-for char in alphabet:
-    print(f"{char} : {final(char)}")
